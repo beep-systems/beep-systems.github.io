@@ -72,13 +72,7 @@ function keypressInput(e) {
 }
 
 function proccessCMD(cmd) {
-    cmd = cmd.trim().toLowerCase();
-    $.get(
-        "/core?cmd=" + cmd,
-        function (data) {
-            output.html(data);
-        }
-    );
+    output.html("Link with the main server is lost");
 }
 
 function openKeyboard() {
