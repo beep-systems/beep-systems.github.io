@@ -1,19 +1,48 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
-	<title>BEEP SYSTEMS (TM)</title>
     <meta charset="utf-8">
-    <link href="/assets/style.css" rel="stylesheet"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BEEP SYSTEMS (TM)</title>
+    <meta
+        name="description"
+        content="BEEP SYSTEMS is the terminal-style portfolio of Yevgeniy Sanitskiy, featuring QuadroFleet, HandelScore, and contact links."
+    >
+    <link href="/assets/style.css" rel="stylesheet">
 </head>
 <body>
-<div id="terminal-window">
-  <span id="cursor"></span>
-  <p><span class="animate">BEEP SYSTEMS (TM) TERMLINK PROTOCOL</span></p>
-  <p><span class="animate">></span><span autofocus contenteditable="true" id="inputcmd"></span></p>
-  <p><div id="output"></div></p>
-  <!-- <div class="scanlines"></div> -->
-</div>
+<main id="terminal-window" aria-label="BEEP SYSTEMS terminal">
+    <div class="terminal-shell">
+        <div id="boot" aria-live="polite"></div>
+        <div id="history" aria-live="polite"></div>
+
+        <form id="command-form" class="prompt-line hidden" autocomplete="off">
+            <span class="prompt" aria-hidden="true">&gt;</span>
+            <label class="sr-only" for="inputcmd">Terminal command</label>
+            <input
+                id="inputcmd"
+                type="text"
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+                aria-describedby="terminal-hint"
+            >
+        </form>
+
+        <p id="terminal-hint" class="hint hidden"></p>
+    </div>
+</main>
+
+<noscript>
+    <section class="noscript-card">
+        <h1>BEEP SYSTEMS</h1>
+        <p>Terminal-style portfolio by Yevgeniy Sanitskiy.</p>
+        <p>Projects: QuadroFleet, HandelScore.</p>
+        <p>LinkedIn: <a href="https://www.linkedin.com/in/yevgeniy-sanitskiy/">yevgeniy-sanitskiy</a></p>
+        <p>Email: <a href="mailto:contact@beep.systems">contact@beep.systems</a></p>
+    </section>
+</noscript>
+
+<script src="/assets/app.js"></script>
 </body>
 </html>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="/assets/app.js"></script>
