@@ -1,3 +1,11 @@
+@font-face {
+    font-family: "JetBrains Mono Local";
+    src: url("/assets/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
 :root {
     --bg: #111;
     --text: #0f0;
@@ -19,7 +27,7 @@ body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
-    font-family: "Andale Mono", "Lucida Console", Monaco, "Courier New", monospace;
+    font-family: "JetBrains Mono Local", "Andale Mono", "Lucida Console", Monaco, "Courier New", monospace;
 }
 
 #terminal-window {
@@ -177,7 +185,7 @@ body {
 .noscript-card {
     margin: 16px 10px;
     color: var(--text);
-    font-family: "Andale Mono", "Lucida Console", Monaco, "Courier New", monospace;
+    font-family: "JetBrains Mono Local", "Andale Mono", "Lucida Console", Monaco, "Courier New", monospace;
     text-shadow: 0 0 4px var(--glow);
 }
 
