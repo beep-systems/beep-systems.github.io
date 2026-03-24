@@ -21,7 +21,8 @@
     };
     var knownCommands = [
         "help",
-        "about",
+        "whoami",
+        "now",
         "projects",
         "project quadrofleet",
         "project handelscore",
@@ -35,13 +36,20 @@
     var content = {
         en: {
             boot: [
-                "BEEP SYSTEMS (TM) TERMINAL PORTFOLIO",
+                "BEEP SYSTEMS (TM) TERMINAL PORTFOLIO 2026",
                 "Type \"help\" to explore. Use \"lang de\" for Deutsch."
             ],
-            hint: "Commands: help, about, projects, project quadrofleet, project handelscore, contact, links, clear, lang en, lang de",
+            hint: "Commands: help, whoami, now, projects, project quadrofleet, project handelscore, contact, links, clear, lang en, lang de",
+            onboarding: [
+                text("whoami     profile and background"),
+                text("projects   selected work"),
+                text("contact    LinkedIn and email"),
+                text("help       full command list")
+            ],
             help: [
                 heading("HELP"),
-                text("about                profile and background"),
+                text("whoami               quick identity"),
+                text("now                  current focus"),
                 text("projects             list selected projects"),
                 text("project quadrofleet  details for QuadroFleet"),
                 text("project handelscore  details for HandelScore"),
@@ -63,6 +71,12 @@
                 blank(),
                 text("Public profile:"),
                 link("LinkedIn", links.linkedin, "linkedin.com/in/yevgeniy-sanitskiy/")
+            ],
+            now: [
+                heading("NOW"),
+                text("Building and refining applied software and hardware products."),
+                text("Current public focus: QuadroFleet and HandelScore."),
+                text("This site is intentionally small, fast, and terminal-native.")
             ],
             projects: [
                 heading("PROJECTS"),
@@ -106,13 +120,20 @@
         },
         de: {
             boot: [
-                "BEEP SYSTEMS (TM) TERMINAL PORTFOLIO",
+                "BEEP SYSTEMS (TM) TERMINAL PORTFOLIO 2026",
                 "Tippe \"help\" zum Start. Mit \"lang en\" wechselst du zu English."
             ],
-            hint: "Befehle: help, about, projects, project quadrofleet, project handelscore, contact, links, clear, lang en, lang de",
+            hint: "Befehle: help, whoami, now, projects, project quadrofleet, project handelscore, contact, links, clear, lang en, lang de",
+            onboarding: [
+                text("whoami     Profil und Hintergrund"),
+                text("projects   ausgewaehlte Arbeiten"),
+                text("contact    LinkedIn und E-Mail"),
+                text("help       volle Befehlsliste")
+            ],
             help: [
                 heading("HILFE"),
-                text("about                Profil und Hintergrund"),
+                text("whoami               kurze Identitaet"),
+                text("now                  aktueller Fokus"),
                 text("projects             ausgewaehlte Projekte"),
                 text("project quadrofleet  Details zu QuadroFleet"),
                 text("project handelscore  Details zu HandelScore"),
@@ -134,6 +155,12 @@
                 blank(),
                 text("Oeffentliches Profil:"),
                 link("LinkedIn", links.linkedin, "linkedin.com/in/yevgeniy-sanitskiy/")
+            ],
+            now: [
+                heading("JETZT"),
+                text("Ich entwickle und verfeinere praxisnahe Software- und Hardware-Produkte."),
+                text("Aktueller oeffentlicher Fokus: QuadroFleet und HandelScore."),
+                text("Diese Seite ist bewusst klein, schnell und terminal-nativ gehalten.")
             ],
             projects: [
                 heading("PROJEKTE"),
@@ -342,6 +369,21 @@
     }
 
     function handleKeydown(event) {
+        if (event.key === "Escape") {
+            event.preventDefault();
+            inputEl.value = "";
+            state.historyIndex = -1;
+            state.draftCommand = "";
+            return;
+        }
+
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "l") {
+            event.preventDefault();
+            historyEl.innerHTML = "";
+            resetInput();
+            return;
+        }
+
         if (event.key === "Tab") {
             event.preventDefault();
             autocompleteInput();
@@ -378,8 +420,13 @@
             return;
         }
 
-        if (command === "about") {
+        if (command === "whoami") {
             renderLines(locale.about, historyEl);
+            return;
+        }
+
+        if (command === "now") {
+            renderLines(locale.now, historyEl);
             return;
         }
 
@@ -488,7 +535,7 @@
             formEl.classList.remove("hidden");
             hintEl.classList.remove("hidden");
             resetInput();
-            renderLines(getLocale().help, historyEl);
+            renderLines(getLocale().onboarding, historyEl);
         });
     }
 
