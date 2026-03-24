@@ -7,7 +7,10 @@
     var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     var state = {
-        language: "en"
+        language: "en",
+        commandHistory: [],
+        historyIndex: -1,
+        draftCommand: ""
     };
 
     var links = {
@@ -16,6 +19,18 @@
         handelscore: "https://handelscore.de/",
         email: "mailto:contact@beep.systems"
     };
+    var knownCommands = [
+        "help",
+        "about",
+        "projects",
+        "project quadrofleet",
+        "project handelscore",
+        "contact",
+        "links",
+        "clear",
+        "lang en",
+        "lang de"
+    ];
 
     var content = {
         en: {
@@ -236,11 +251,113 @@
 
     function resetInput() {
         inputEl.value = "";
+        state.historyIndex = -1;
+        state.draftCommand = "";
         inputEl.focus();
     }
 
     function normalizeCommand(value) {
         return value.trim().toLowerCase().replace(/\s+/g, " ");
+    }
+
+    function getMatchingCommands(value) {
+        var normalized = normalizeCommand(value);
+
+        if (!normalized) {
+            return [];
+        }
+
+        return knownCommands.filter(function (command) {
+            return command.indexOf(normalized) === 0;
+        });
+    }
+
+    function getCommonPrefix(values) {
+        if (!values.length) {
+            return "";
+        }
+
+        return values.slice(1).reduce(function (prefix, value) {
+            var nextPrefix = prefix;
+
+            while (value.indexOf(nextPrefix) !== 0 && nextPrefix) {
+                nextPrefix = nextPrefix.slice(0, -1);
+            }
+
+            return nextPrefix;
+        }, values[0]);
+    }
+
+    function autocompleteInput() {
+        var matches = getMatchingCommands(inputEl.value);
+
+        if (!matches.length) {
+            return;
+        }
+
+        if (matches.length === 1) {
+            inputEl.value = matches[0];
+            return;
+        }
+
+        var commonPrefix = getCommonPrefix(matches);
+        var normalizedInput = normalizeCommand(inputEl.value);
+
+        if (commonPrefix && commonPrefix.length > normalizedInput.length) {
+            inputEl.value = commonPrefix;
+            return;
+        }
+
+        renderLines([text(matches.join("    "))], historyEl);
+    }
+
+    function showPreviousCommand() {
+        if (!state.commandHistory.length) {
+            return;
+        }
+
+        if (state.historyIndex === -1) {
+            state.draftCommand = inputEl.value;
+            state.historyIndex = state.commandHistory.length - 1;
+        } else if (state.historyIndex > 0) {
+            state.historyIndex -= 1;
+        }
+
+        inputEl.value = state.commandHistory[state.historyIndex];
+    }
+
+    function showNextCommand() {
+        if (state.historyIndex === -1) {
+            return;
+        }
+
+        if (state.historyIndex < state.commandHistory.length - 1) {
+            state.historyIndex += 1;
+            inputEl.value = state.commandHistory[state.historyIndex];
+            return;
+        }
+
+        state.historyIndex = -1;
+        inputEl.value = state.draftCommand;
+    }
+
+    function handleKeydown(event) {
+        if (event.key === "Tab") {
+            event.preventDefault();
+            autocompleteInput();
+            return;
+        }
+
+        if (event.key === "ArrowUp") {
+            event.preventDefault();
+            showPreviousCommand();
+            return;
+        }
+
+        if (event.key === "ArrowDown") {
+            event.preventDefault();
+            showNextCommand();
+        }
     }
 
     function executeCommand(rawCommand) {
@@ -311,6 +428,7 @@
             return;
         }
 
+        state.commandHistory.push(rawCommand);
         appendCommand(rawCommand);
         executeCommand(rawCommand);
         resetInput();
@@ -375,6 +493,7 @@
     }
 
     formEl.addEventListener("submit", handleSubmit);
+    inputEl.addEventListener("keydown", handleKeydown);
     document.getElementById("terminal-window").addEventListener("click", function () {
         inputEl.focus();
     });
