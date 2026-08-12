@@ -16,7 +16,6 @@
     var links = {
         linkedin: "https://www.linkedin.com/in/yevgeniy-sanitskiy/",
         quadrofleet: "https://quadrofleet.com/",
-        handelscore: "https://handelscore.de/",
         fskcomm: "https://fsk.beep.systems/",
         email: "mailto:contact@beep.systems"
     };
@@ -26,7 +25,6 @@
         "now",
         "projects",
         "project quadrofleet",
-        "project handelscore",
         "project fsk-comm",
         "contact",
         "links",
@@ -41,7 +39,7 @@
                 "BEEP SYSTEMS (TM) TERMINAL PORTFOLIO 2026",
                 "Type \"help\" to explore. Use \"lang de\" for Deutsch."
             ],
-            hint: "Commands: help, whoami, now, projects, project quadrofleet, project handelscore, project fsk-comm, contact, links, clear, lang en, lang de",
+            hint: "Commands: help, whoami, now, projects, project quadrofleet, project fsk-comm, contact, links, clear, lang en, lang de",
             onboarding: [
                 text("whoami     profile and background"),
                 text("projects   selected work"),
@@ -54,7 +52,6 @@
                 text("now                  current focus"),
                 text("projects             list selected projects"),
                 text("project quadrofleet  details for QuadroFleet"),
-                text("project handelscore  details for HandelScore"),
                 text("project fsk-comm     details for FSK Comm"),
                 text("links                direct links"),
                 text("contact              contact links"),
@@ -70,7 +67,6 @@
                 blank(),
                 text("Selected projects:"),
                 text("- QuadroFleet"),
-                text("- HandelScore"),
                 text("- FSK Comm"),
                 blank(),
                 text("Public profile:"),
@@ -79,16 +75,15 @@
             now: [
                 heading("NOW"),
                 text("Building and refining applied software and hardware products."),
-                text("Current public focus: QuadroFleet, HandelScore, and FSK Comm."),
+                text("Current public focus: QuadroFleet and FSK Comm."),
                 text("This site is intentionally small, fast, and terminal-native.")
             ],
             projects: [
                 heading("PROJECTS"),
                 text("- QuadroFleet: Long-range drone control over 4G/5G with low-latency video, telemetry, and secure connectivity."),
-                text("- HandelScore: B2B partner risk signal for approval, onboarding, and order workflows."),
                 text("- FSK Comm: Encrypted short-message delivery over analog audio with BFSK modulation and an Android send-and-listen workflow."),
                 blank(),
-                text("Type \"project quadrofleet\", \"project handelscore\", or \"project fsk-comm\" for details.")
+                text("Type \"project quadrofleet\" or \"project fsk-comm\" for details.")
             ],
             projectQuadrofleet: [
                 heading("QUADROFLEET"),
@@ -96,13 +91,6 @@
                 text("Focus: low-latency video, telemetry, remote operations, and secure connectivity."),
                 text("Positioning: practical control stack for beyond-local-range drone use cases."),
                 link("Website", links.quadrofleet, "quadrofleet.com")
-            ],
-            projectHandelscore: [
-                heading("HANDELSCORE"),
-                text("A B2B risk signal product for checking business partners."),
-                text("Focus: support for approval, onboarding, and order workflows."),
-                text("Positioning: operational decision support around VAT ID and partner validation."),
-                link("Website", links.handelscore, "handelscore.de")
             ],
             projectFskComm: [
                 heading("FSK COMM"),
@@ -114,7 +102,6 @@
             links: [
                 heading("LINKS"),
                 link("QuadroFleet", links.quadrofleet, "quadrofleet.com"),
-                link("HandelScore", links.handelscore, "handelscore.de"),
                 link("FSK Comm", links.fskcomm, "fsk.beep.systems"),
                 link("LinkedIn", links.linkedin, "linkedin.com/in/yevgeniy-sanitskiy/"),
                 link("Email", links.email, "contact@beep.systems")
@@ -136,7 +123,7 @@
                 "BEEP SYSTEMS (TM) TERMINAL PORTFOLIO 2026",
                 "Tippe \"help\" zum Start. Mit \"lang en\" wechselst du zu English."
             ],
-            hint: "Befehle: help, whoami, now, projects, project quadrofleet, project handelscore, project fsk-comm, contact, links, clear, lang en, lang de",
+            hint: "Befehle: help, whoami, now, projects, project quadrofleet, project fsk-comm, contact, links, clear, lang en, lang de",
             onboarding: [
                 text("whoami     Profil und Hintergrund"),
                 text("projects   ausgewaehlte Arbeiten"),
@@ -149,7 +136,6 @@
                 text("now                  aktueller Fokus"),
                 text("projects             ausgewaehlte Projekte"),
                 text("project quadrofleet  Details zu QuadroFleet"),
-                text("project handelscore  Details zu HandelScore"),
                 text("project fsk-comm     Details zu FSK Comm"),
                 text("links                direkte Links"),
                 text("contact              Kontaktlinks"),
@@ -165,7 +151,6 @@
                 blank(),
                 text("Ausgewaehlte Projekte:"),
                 text("- QuadroFleet"),
-                text("- HandelScore"),
                 text("- FSK Comm"),
                 blank(),
                 text("Öffentliches Profil:"),
@@ -174,16 +159,15 @@
             now: [
                 heading("JETZT"),
                 text("Ich entwickle und verfeinere praxisnahe Software- und Hardware-Produkte."),
-                text("Aktueller öffentlicher Fokus: QuadroFleet, HandelScore und FSK Comm."),
+                text("Aktueller öffentlicher Fokus: QuadroFleet und FSK Comm."),
                 text("Diese Seite ist bewusst klein, schnell und terminal-nativ gehalten.")
             ],
             projects: [
                 heading("PROJEKTE"),
                 text("- QuadroFleet: Fernsteuerung von Drohnen ueber 4G/5G mit Video, Telemetrie und sicherer Konnektivitaet."),
-                text("- HandelScore: B2B-Risikosignal fuer Freigabe-, Onboarding- und Bestellprozesse."),
                 text("- FSK Comm: Versand kurzer verschlüsselter Nachrichten über analoges Audio mit BFSK-Modulation und kompaktem Android-Sende-und-Hoer-Workflow."),
                 blank(),
-                text("Tippe \"project quadrofleet\", \"project handelscore\" oder \"project fsk-comm\" fuer Details.")
+                text("Tippe \"project quadrofleet\" oder \"project fsk-comm\" fuer Details.")
             ],
             projectQuadrofleet: [
                 heading("QUADROFLEET"),
@@ -191,13 +175,6 @@
                 text("Fokus: Video mit geringer Latenz, Telemetrie, Remote-Betrieb und sichere Konnektivitaet."),
                 text("Positionierung: praxisnaher Kontroll-Stack fuer Drone-Operations ausserhalb lokaler Reichweite."),
                 link("Website", links.quadrofleet, "quadrofleet.com")
-            ],
-            projectHandelscore: [
-                heading("HANDELSCORE"),
-                text("Ein B2B-Risikosignal fuer die Pruefung von Geschaeftspartnern."),
-                text("Fokus: Unterstuetzung fuer Freigabe-, Onboarding- und Bestellprozesse."),
-                text("Positionierung: operative Entscheidungshilfe rund um USt-IdNr. und Partnerpruefung."),
-                link("Website", links.handelscore, "handelscore.de")
             ],
             projectFskComm: [
                 heading("FSK COMM"),
@@ -209,7 +186,6 @@
             links: [
                 heading("LINKS"),
                 link("QuadroFleet", links.quadrofleet, "quadrofleet.com"),
-                link("HandelScore", links.handelscore, "handelscore.de"),
                 link("FSK Comm", links.fskcomm, "fsk.beep.systems"),
                 link("LinkedIn", links.linkedin, "linkedin.com/in/yevgeniy-sanitskiy/"),
                 link("E-Mail", links.email, "contact@beep.systems")
@@ -461,11 +437,6 @@
 
         if (command === "project quadrofleet") {
             renderLines(locale.projectQuadrofleet, historyEl);
-            return;
-        }
-
-        if (command === "project handelscore") {
-            renderLines(locale.projectHandelscore, historyEl);
             return;
         }
 
