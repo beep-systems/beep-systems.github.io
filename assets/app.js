@@ -1,549 +1,118 @@
 (function () {
-    var bootEl = document.getElementById("boot");
-    var historyEl = document.getElementById("history");
-    var formEl = document.getElementById("command-form");
-    var inputEl = document.getElementById("inputcmd");
-    var hintEl = document.getElementById("terminal-hint");
-    var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    "use strict";
 
-    var state = {
-        language: "en",
-        commandHistory: [],
-        historyIndex: -1,
-        draftCommand: ""
-    };
+    var localeKey = "beep-systems:locale";
+    var language = "en";
+    var switcher = document.getElementById("language-switcher");
 
-    var links = {
-        linkedin: "https://www.linkedin.com/in/yevgeniy-sanitskiy/",
-        quadrofleet: "https://quadrofleet.com/",
-        fskcomm: "https://fsk.beep.systems/",
-        email: "mailto:contact@beep.systems"
-    };
-    var knownCommands = [
-        "help",
-        "whoami",
-        "now",
-        "projects",
-        "project quadrofleet",
-        "project fsk-comm",
-        "contact",
-        "links",
-        "clear",
-        "lang en",
-        "lang de"
+    // Keep the English fallback in index.html in sync with this registry.
+    var projects = [
+        {
+            id: "quadrofleet", name: "QuadroFleet", url: "https://quadrofleet.com/", kind: "website",
+            en: {
+                summary: "Long-range drone control over 4G/5G with FPV video and telemetry.",
+                technical: "OpenIPC video, WireGuard connectivity and CRSF flight-controller integration."
+            },
+            de: {
+                summary: "Drohnenfernsteuerung über 4G/5G mit FPV-Video und Telemetrie.",
+                technical: "OpenIPC-Video, WireGuard-Verbindungen und Integration von CRSF-Flugcontrollern."
+            }
+        },
+        {
+            id: "fsk-comm", name: "FSK Comm", url: "https://fsk.beep.systems/", kind: "website",
+            en: {
+                summary: "An Android app for sending short encrypted messages through sound.",
+                technical: "BFSK modulation, shared-key message protection and a compact send-and-listen workflow."
+            },
+            de: {
+                summary: "Eine Android-App zum Senden kurzer verschlüsselter Nachrichten über Schall.",
+                technical: "BFSK-Modulation, Nachrichtenschutz mit gemeinsamem Schlüssel und ein kompakter Senden-und-Hören-Ablauf."
+            }
+        },
+        {
+            id: "voluscape", name: "VoluScape", url: "https://voluscape.beep.systems/", kind: "demo",
+            en: {
+                summary: "Drone footage reconstructed into explorable 3D landscapes using Gaussian splatting.",
+                technical: "Reconstruction tools built around Spirula, plus a gallery and viewer extensions based on SuperSplat and PlayCanvas."
+            },
+            de: {
+                summary: "Drohnenaufnahmen werden mit Gaussian Splatting zu erkundbaren 3D-Landschaften rekonstruiert.",
+                technical: "Rekonstruktionswerkzeuge auf Basis von Spirula sowie eine Galerie und Viewer-Erweiterungen auf Basis von SuperSplat und PlayCanvas."
+            }
+        },
+        {
+            id: "ventureunvault", name: "VentureUnvault", url: "https://ventureunvault.beep.systems/", kind: "website",
+            en: {
+                summary: "Discover startup projects from multiple sources, generate concise AI summaries and publish attributed posts to Telegram.",
+                technical: "n8n, PostgreSQL and Gemini; deduplication before AI processing, controlled retries and reconciliation of uncertain publication outcomes. Website based on Telecast."
+            },
+            de: {
+                summary: "Startup-Projekte aus mehreren Quellen entdecken, prägnante KI-Zusammenfassungen erstellen und Beiträge mit Quellenangabe auf Telegram veröffentlichen.",
+                technical: "n8n, PostgreSQL und Gemini; Deduplizierung vor der KI-Verarbeitung, kontrollierte Wiederholungen und Abgleich unklarer Veröffentlichungsergebnisse. Website auf Basis von Telecast."
+            }
+        },
+        {
+            id: "drum-machine", name: "Drum Machine", url: "https://drum.beep.systems/", kind: "demo",
+            en: {
+                summary: "A browser drum machine for guitar practice, from rock to metal.",
+                technical: "Web Audio scheduling, acoustic and industrial kits, a rhythm editor, local saving and EN/DE/RU controls."
+            },
+            de: {
+                summary: "Eine Drum Machine im Browser zum Gitarrenüben, von Rock bis Metal.",
+                technical: "Web-Audio-Scheduling, akustische und Industrial-Kits, Rhythmuseditor, lokales Speichern und Bedienung auf EN/DE/RU."
+            }
+        }
     ];
 
     var content = {
         en: {
-            boot: [
-                "BEEP SYSTEMS (TM) TERMINAL PORTFOLIO 2026",
-                "Type \"help\" to explore. Use \"lang de\" for Deutsch."
-            ],
-            hint: "Commands: help, whoami, now, projects, project quadrofleet, project fsk-comm, contact, links, clear, lang en, lang de",
-            onboarding: [
-                text("whoami     profile and background"),
-                text("projects   selected work"),
-                text("contact    LinkedIn and email"),
-                text("help       full command list")
-            ],
-            help: [
-                heading("HELP"),
-                text("whoami               quick identity"),
-                text("now                  current focus"),
-                text("projects             list selected projects"),
-                text("project quadrofleet  details for QuadroFleet"),
-                text("project fsk-comm     details for FSK Comm"),
-                text("links                direct links"),
-                text("contact              contact links"),
-                text("lang en              switch to English"),
-                text("lang de              switch to German"),
-                text("clear                clear terminal history")
-            ],
-            about: [
-                heading("ABOUT"),
-                text("Yevgeniy Sanitskiy"),
-                text("I build applied software and hardware products."),
-                text("This site is a terminal-style portfolio for selected products and contact routes."),
-                blank(),
-                text("Selected projects:"),
-                text("- QuadroFleet"),
-                text("- FSK Comm"),
-                blank(),
-                text("Public profile:"),
-                link("LinkedIn", links.linkedin, "linkedin.com/in/yevgeniy-sanitskiy/")
-            ],
-            now: [
-                heading("NOW"),
-                text("Building and refining applied software and hardware products."),
-                text("Current public focus: QuadroFleet and FSK Comm."),
-                text("This site is intentionally small, fast, and terminal-native.")
-            ],
-            projects: [
-                heading("PROJECTS"),
-                text("- QuadroFleet: Long-range drone control over 4G/5G with low-latency video, telemetry, and secure connectivity."),
-                text("- FSK Comm: Encrypted short-message delivery over analog audio with BFSK modulation and an Android send-and-listen workflow."),
-                blank(),
-                text("Type \"project quadrofleet\" or \"project fsk-comm\" for details.")
-            ],
-            projectQuadrofleet: [
-                heading("QUADROFLEET"),
-                text("A system for long-range drone control over 4G/5G."),
-                text("Focus: low-latency video, telemetry, remote operations, and secure connectivity."),
-                text("Positioning: practical control stack for beyond-local-range drone use cases."),
-                link("Website", links.quadrofleet, "quadrofleet.com")
-            ],
-            projectFskComm: [
-                heading("FSK COMM"),
-                text("An Android app for sending short encrypted messages over analog audio."),
-                text("Focus: BFSK modulation, shared-key protection, and a compact send-and-listen workflow."),
-                text("Positioning: practical point-to-point audio messaging when a message should travel through sound instead of a network."),
-                link("Website", links.fskcomm, "fsk.beep.systems")
-            ],
-            links: [
-                heading("LINKS"),
-                link("QuadroFleet", links.quadrofleet, "quadrofleet.com"),
-                link("FSK Comm", links.fskcomm, "fsk.beep.systems"),
-                link("LinkedIn", links.linkedin, "linkedin.com/in/yevgeniy-sanitskiy/"),
-                link("Email", links.email, "contact@beep.systems")
-            ],
-            contact: [
-                heading("CONTACT"),
-                text("The best way to reach me is LinkedIn or email."),
-                link("LinkedIn", links.linkedin, "linkedin.com/in/yevgeniy-sanitskiy/"),
-                link("Email", links.email, "contact@beep.systems")
-            ],
-            languageChanged: {
-                en: "Language set to English.",
-                de: "Sprache auf Deutsch gesetzt."
-            },
-            unknownCommand: "Unknown command. Type \"help\"."
+            intro: "I build software and hardware tools for drone control, audio communication, 3D reconstruction, workflow automation and music practice.",
+            projectsHeading: "Selected projects", contactHeading: "Contact",
+            website: "Website", demo: "Demo", languageLabel: "Language",
+            languageNames: { en: "EN: English", de: "DE: German" }
         },
         de: {
-            boot: [
-                "BEEP SYSTEMS (TM) TERMINAL PORTFOLIO 2026",
-                "Tippe \"help\" zum Start. Mit \"lang en\" wechselst du zu English."
-            ],
-            hint: "Befehle: help, whoami, now, projects, project quadrofleet, project fsk-comm, contact, links, clear, lang en, lang de",
-            onboarding: [
-                text("whoami     Profil und Hintergrund"),
-                text("projects   ausgewaehlte Arbeiten"),
-                text("contact    LinkedIn und E-Mail"),
-                text("help       volle Befehlsliste")
-            ],
-            help: [
-                heading("HILFE"),
-                text("whoami               kurze Identitaet"),
-                text("now                  aktueller Fokus"),
-                text("projects             ausgewaehlte Projekte"),
-                text("project quadrofleet  Details zu QuadroFleet"),
-                text("project fsk-comm     Details zu FSK Comm"),
-                text("links                direkte Links"),
-                text("contact              Kontaktlinks"),
-                text("lang en              auf Englisch wechseln"),
-                text("lang de              auf Deutsch wechseln"),
-                text("clear                Terminal-Verlauf loeschen")
-            ],
-            about: [
-                heading("UEBER MICH"),
-                text("Yevgeniy Sanitskiy"),
-                text("Ich entwickle praxisnahe Software- und Hardware-Produkte."),
-                text("Diese Seite ist ein Terminal-Portfolio fuer ausgewaehlte Produkte und Kontaktwege."),
-                blank(),
-                text("Ausgewaehlte Projekte:"),
-                text("- QuadroFleet"),
-                text("- FSK Comm"),
-                blank(),
-                text("Öffentliches Profil:"),
-                link("LinkedIn", links.linkedin, "linkedin.com/in/yevgeniy-sanitskiy/")
-            ],
-            now: [
-                heading("JETZT"),
-                text("Ich entwickle und verfeinere praxisnahe Software- und Hardware-Produkte."),
-                text("Aktueller öffentlicher Fokus: QuadroFleet und FSK Comm."),
-                text("Diese Seite ist bewusst klein, schnell und terminal-nativ gehalten.")
-            ],
-            projects: [
-                heading("PROJEKTE"),
-                text("- QuadroFleet: Fernsteuerung von Drohnen ueber 4G/5G mit Video, Telemetrie und sicherer Konnektivitaet."),
-                text("- FSK Comm: Versand kurzer verschlüsselter Nachrichten über analoges Audio mit BFSK-Modulation und kompaktem Android-Sende-und-Hoer-Workflow."),
-                blank(),
-                text("Tippe \"project quadrofleet\" oder \"project fsk-comm\" fuer Details.")
-            ],
-            projectQuadrofleet: [
-                heading("QUADROFLEET"),
-                text("Ein System fuer die Fernsteuerung von Drohnen ueber 4G/5G."),
-                text("Fokus: Video mit geringer Latenz, Telemetrie, Remote-Betrieb und sichere Konnektivitaet."),
-                text("Positionierung: praxisnaher Kontroll-Stack fuer Drone-Operations ausserhalb lokaler Reichweite."),
-                link("Website", links.quadrofleet, "quadrofleet.com")
-            ],
-            projectFskComm: [
-                heading("FSK COMM"),
-                text("Eine Android-App für den Versand kurzer verschlüsselter Nachrichten über analoges Audio."),
-                text("Fokus: BFSK-Modulation, Schutz per gemeinsamem Schlüssel und ein kompakter Senden-und-Hören-Ablauf."),
-                text("Positionierung: praxisnahes Punkt-zu-Punkt-Audio-Messaging, wenn Nachrichten über Klang statt über ein Netzwerk übertragen werden sollen."),
-                link("Website", links.fskcomm, "fsk.beep.systems")
-            ],
-            links: [
-                heading("LINKS"),
-                link("QuadroFleet", links.quadrofleet, "quadrofleet.com"),
-                link("FSK Comm", links.fskcomm, "fsk.beep.systems"),
-                link("LinkedIn", links.linkedin, "linkedin.com/in/yevgeniy-sanitskiy/"),
-                link("E-Mail", links.email, "contact@beep.systems")
-            ],
-            contact: [
-                heading("KONTAKT"),
-                text("Am besten erreichst du mich ueber LinkedIn oder per E-Mail."),
-                link("LinkedIn", links.linkedin, "linkedin.com/in/yevgeniy-sanitskiy/"),
-                link("E-Mail", links.email, "contact@beep.systems")
-            ],
-            languageChanged: {
-                en: "Language set to English.",
-                de: "Sprache auf Deutsch gesetzt."
-            },
-            unknownCommand: "Unbekannter Befehl. Tippe \"help\"."
+            intro: "Ich entwickle Software- und Hardware-Werkzeuge für Drohnensteuerung, Audiokommunikation, 3D-Rekonstruktion, Workflow-Automatisierung und Musikübungen.",
+            projectsHeading: "Ausgewählte Projekte", contactHeading: "Kontakt",
+            website: "Website", demo: "Demo", languageLabel: "Sprache",
+            languageNames: { en: "EN: Englisch", de: "DE: Deutsch" }
         }
     };
 
-    function text(value) {
-        return { kind: "text", value: value };
-    }
-
-    function heading(value) {
-        return { kind: "heading", value: value };
-    }
-
-    function link(label, href, value) {
-        return { kind: "link", label: label, href: href, value: value };
-    }
-
-    function blank() {
-        return { kind: "blank" };
-    }
-
-    function getLocale() {
-        return content[state.language];
-    }
-
-    function scrollToBottom() {
-        window.scrollTo({ top: document.body.scrollHeight, behavior: prefersReducedMotion ? "auto" : "smooth" });
-    }
-
-    function appendCommand(command) {
-        var entry = document.createElement("div");
-        entry.className = "entry entry-command";
-        entry.textContent = "> " + command;
-        historyEl.appendChild(entry);
-    }
-
-    function renderLines(lines, target) {
-        var container = document.createElement("div");
-        container.className = "entry entry-output";
-
-        lines.forEach(function (line) {
-            var node = document.createElement("p");
-            node.className = "line";
-
-            if (line.kind === "blank") {
-                node.innerHTML = "&nbsp;";
-            } else if (line.kind === "heading") {
-                node.classList.add("line-heading");
-                node.textContent = line.value;
-            } else if (line.kind === "link") {
-                node.classList.add("line-link");
-                var label = document.createElement("span");
-                label.textContent = line.label + ": ";
-                var anchor = document.createElement("a");
-                anchor.href = line.href;
-                anchor.target = "_blank";
-                anchor.rel = "noreferrer";
-                anchor.textContent = line.value;
-                node.appendChild(label);
-                node.appendChild(anchor);
-            } else {
-                node.textContent = line.value;
-            }
-
-            container.appendChild(node);
-        });
-
-        target.appendChild(container);
-        scrollToBottom();
-    }
-
-    function setLanguage(language) {
-        state.language = language;
+    function setLanguage(nextLanguage) {
+        language = nextLanguage;
+        var locale = content[language];
         document.documentElement.lang = language;
-        hintEl.textContent = getLocale().hint;
-    }
-
-    function resetInput() {
-        inputEl.value = "";
-        state.historyIndex = -1;
-        state.draftCommand = "";
-        inputEl.focus();
-    }
-
-    function normalizeCommand(value) {
-        return value.trim().toLowerCase().replace(/\s+/g, " ");
-    }
-
-    function getMatchingCommands(value) {
-        var normalized = normalizeCommand(value);
-
-        if (!normalized) {
-            return [];
-        }
-
-        return knownCommands.filter(function (command) {
-            return command.indexOf(normalized) === 0;
+        document.querySelectorAll("[data-i18n]").forEach(function (node) {
+            node.textContent = locale[node.dataset.i18n];
         });
-    }
-
-    function getCommonPrefix(values) {
-        if (!values.length) {
-            return "";
-        }
-
-        return values.slice(1).reduce(function (prefix, value) {
-            var nextPrefix = prefix;
-
-            while (value.indexOf(nextPrefix) !== 0 && nextPrefix) {
-                nextPrefix = nextPrefix.slice(0, -1);
-            }
-
-            return nextPrefix;
-        }, values[0]);
-    }
-
-    function autocompleteInput() {
-        var matches = getMatchingCommands(inputEl.value);
-
-        if (!matches.length) {
-            return;
-        }
-
-        if (matches.length === 1) {
-            inputEl.value = matches[0];
-            return;
-        }
-
-        var commonPrefix = getCommonPrefix(matches);
-        var normalizedInput = normalizeCommand(inputEl.value);
-
-        if (commonPrefix && commonPrefix.length > normalizedInput.length) {
-            inputEl.value = commonPrefix;
-            return;
-        }
-
-        renderLines([text(matches.join("    "))], historyEl);
-    }
-
-    function showPreviousCommand() {
-        if (!state.commandHistory.length) {
-            return;
-        }
-
-        if (state.historyIndex === -1) {
-            state.draftCommand = inputEl.value;
-            state.historyIndex = state.commandHistory.length - 1;
-        } else if (state.historyIndex > 0) {
-            state.historyIndex -= 1;
-        }
-
-        inputEl.value = state.commandHistory[state.historyIndex];
-    }
-
-    function showNextCommand() {
-        if (state.historyIndex === -1) {
-            return;
-        }
-
-        if (state.historyIndex < state.commandHistory.length - 1) {
-            state.historyIndex += 1;
-            inputEl.value = state.commandHistory[state.historyIndex];
-            return;
-        }
-
-        state.historyIndex = -1;
-        inputEl.value = state.draftCommand;
-    }
-
-    function handleKeydown(event) {
-        if (event.key === "Escape") {
-            event.preventDefault();
-            inputEl.value = "";
-            state.historyIndex = -1;
-            state.draftCommand = "";
-            return;
-        }
-
-        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "l") {
-            event.preventDefault();
-            historyEl.innerHTML = "";
-            resetInput();
-            return;
-        }
-
-        if (event.key === "Tab") {
-            event.preventDefault();
-            autocompleteInput();
-            return;
-        }
-
-        if (event.key === "ArrowUp") {
-            event.preventDefault();
-            showPreviousCommand();
-            return;
-        }
-
-        if (event.key === "ArrowDown") {
-            event.preventDefault();
-            showNextCommand();
-        }
-    }
-
-    function executeCommand(rawCommand) {
-        var locale = getLocale();
-        var command = normalizeCommand(rawCommand);
-
-        if (!command) {
-            return;
-        }
-
-        if (command === "clear") {
-            historyEl.innerHTML = "";
-            return;
-        }
-
-        if (command === "help") {
-            renderLines(locale.help, historyEl);
-            return;
-        }
-
-        if (command === "whoami") {
-            renderLines(locale.about, historyEl);
-            return;
-        }
-
-        if (command === "now") {
-            renderLines(locale.now, historyEl);
-            return;
-        }
-
-        if (command === "projects") {
-            renderLines(locale.projects, historyEl);
-            return;
-        }
-
-        if (command === "project quadrofleet") {
-            renderLines(locale.projectQuadrofleet, historyEl);
-            return;
-        }
-
-        if (command === "project fsk-comm") {
-            renderLines(locale.projectFskComm, historyEl);
-            return;
-        }
-
-        if (command === "links") {
-            renderLines(locale.links, historyEl);
-            return;
-        }
-
-        if (command === "contact") {
-            renderLines(locale.contact, historyEl);
-            return;
-        }
-
-        if (command === "lang en" || command === "lang de") {
-            var nextLanguage = command.slice(-2);
-            setLanguage(nextLanguage);
-            renderLines([text(getLocale().languageChanged[nextLanguage])], historyEl);
-            return;
-        }
-
-        renderLines([text(locale.unknownCommand)], historyEl);
-    }
-
-    function handleSubmit(event) {
-        event.preventDefault();
-
-        var rawCommand = inputEl.value;
-
-        if (!rawCommand.trim()) {
-            resetInput();
-            return;
-        }
-
-        state.commandHistory.push(rawCommand);
-        appendCommand(rawCommand);
-        executeCommand(rawCommand);
-        resetInput();
-    }
-
-    function createBootLine() {
-        var line = document.createElement("p");
-        line.className = "boot-line";
-        return line;
-    }
-
-    function typeBootLine(textValue) {
-        return new Promise(function (resolve) {
-            var line = createBootLine();
-            var cursor = document.createElement("span");
-            cursor.className = "cursor";
-            bootEl.appendChild(line);
-            line.appendChild(cursor);
-
-            if (prefersReducedMotion) {
-                line.textContent = textValue;
-                resolve();
-                return;
-            }
-
-            var index = 0;
-
-            function step() {
-                if (index > textValue.length) {
-                    line.textContent = textValue;
-                    resolve();
-                    return;
-                }
-
-                line.textContent = textValue.slice(0, index);
-                line.appendChild(cursor);
-                index += 1;
-                window.setTimeout(step, 18);
-            }
-
-            step();
-        });
-    }
-
-    function boot() {
-        setLanguage(state.language);
-
-        getLocale().boot.reduce(function (promise, line) {
-            return promise.then(function () {
-                return typeBootLine(line);
-            }).then(function () {
-                return new Promise(function (resolve) {
-                    window.setTimeout(resolve, prefersReducedMotion ? 0 : 180);
-                });
+        projects.forEach(function (project) {
+            var article = document.querySelector('[data-project="' + project.id + '"]');
+            ["summary", "technical"].forEach(function (field) {
+                article.querySelector('[data-field="' + field + '"]').textContent = project[language][field];
             });
-        }, Promise.resolve()).then(function () {
-            formEl.classList.remove("hidden");
-            hintEl.classList.remove("hidden");
-            resetInput();
-            renderLines(getLocale().onboarding, historyEl);
+            var anchor = article.querySelector('[data-field="link"]');
+            anchor.href = project.url;
+            anchor.textContent = locale[project.kind] + ": " + new URL(project.url).hostname;
+        });
+        switcher.setAttribute("aria-label", locale.languageLabel);
+        switcher.querySelectorAll("[data-language]").forEach(function (button) {
+            button.setAttribute("aria-label", locale.languageNames[button.dataset.language]);
+            button.setAttribute("aria-pressed", String(button.dataset.language === language));
         });
     }
 
-    formEl.addEventListener("submit", handleSubmit);
-    inputEl.addEventListener("keydown", handleKeydown);
-    document.getElementById("terminal-window").addEventListener("click", function () {
-        inputEl.focus();
-    });
+    try {
+        var savedLanguage = window.localStorage.getItem(localeKey);
+        if (savedLanguage === "en" || savedLanguage === "de") { language = savedLanguage; }
+    } catch (_) { /* English is the fallback when storage is unavailable. */ }
 
-    boot();
+    switcher.querySelectorAll("[data-language]").forEach(function (button) {
+        button.addEventListener("click", function () {
+            setLanguage(button.dataset.language);
+            try { window.localStorage.setItem(localeKey, language); } catch (_) { /* Keep the selection in memory. */ }
+        });
+    });
+    setLanguage(language);
+    switcher.hidden = false;
 }());

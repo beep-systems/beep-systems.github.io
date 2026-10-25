@@ -7,20 +7,20 @@
     <meta name="theme-color" content="#111111">
     <meta
         name="description"
-        content="BEEP SYSTEMS is the terminal-style portfolio of Yevgeniy Sanitskiy, featuring QuadroFleet, FSK Comm, and contact links."
+        content="Engineering projects by Yevgeniy Sanitskiy: QuadroFleet, FSK Comm, VoluScape, VentureUnvault and Drum Machine. Drones, audio, 3D and workflow automation."
     >
     <meta name="robots" content="index,follow">
     <link rel="canonical" href="https://beep.systems/">
     <meta property="og:type" content="website">
     <meta property="og:title" content="BEEP SYSTEMS (TM)">
-    <meta property="og:description" content="Terminal-style portfolio of Yevgeniy Sanitskiy, featuring QuadroFleet, FSK Comm, and direct contact links.">
+    <meta property="og:description" content="Engineering projects by Yevgeniy Sanitskiy: QuadroFleet, FSK Comm, VoluScape, VentureUnvault and Drum Machine. Drones, audio, 3D and workflow automation.">
     <meta property="og:url" content="https://beep.systems/">
     <meta property="og:image" content="https://beep.systems/assets/icons/avatar-source.png">
     <meta property="og:image:width" content="400">
     <meta property="og:image:height" content="400">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="BEEP SYSTEMS (TM)">
-    <meta name="twitter:description" content="Terminal-style portfolio of Yevgeniy Sanitskiy, featuring QuadroFleet, FSK Comm, and direct contact links.">
+    <meta name="twitter:description" content="Engineering projects by Yevgeniy Sanitskiy: QuadroFleet, FSK Comm, VoluScape, VentureUnvault and Drum Machine. Drones, audio, 3D and workflow automation.">
     <meta name="twitter:image" content="https://beep.systems/assets/icons/avatar-source.png">
     <link rel="icon" href="/assets/icons/favicon.ico" sizes="any">
     <link rel="icon" type="image/png" href="/assets/icons/favicon-32x32.png" sizes="32x32">
@@ -28,37 +28,62 @@
     <link href="/assets/style.css" rel="stylesheet">
 </head>
 <body>
-<main id="terminal-window" aria-label="BEEP SYSTEMS terminal">
-    <div class="terminal-shell">
-        <div id="boot" aria-live="polite"></div>
-        <div id="history" aria-live="polite"></div>
+<main id="portfolio">
+    <div class="portfolio-shell">
+        <header class="profile">
+            <div class="profile-top">
+                <p class="eyebrow">BEEP SYSTEMS (TM)</p>
+                <div id="language-switcher" class="language-switcher" role="group" aria-label="Language" hidden>
+                    <button type="button" data-language="en" aria-label="EN: English" aria-pressed="true">EN</button>
+                    <button type="button" data-language="de" aria-label="DE: German" aria-pressed="false">DE</button>
+                </div>
+            </div>
+            <h1>Yevgeniy Sanitskiy</h1>
+            <p data-i18n="intro">I build software and hardware tools for drone control, audio communication, 3D reconstruction, workflow automation and music practice.</p>
+        </header>
 
-        <form id="command-form" class="prompt-line hidden" autocomplete="off">
-            <span class="prompt" aria-hidden="true">&gt;</span>
-            <label class="sr-only" for="inputcmd">Terminal command</label>
-            <input
-                id="inputcmd"
-                type="text"
-                autocomplete="off"
-                autocapitalize="off"
-                spellcheck="false"
-                aria-describedby="terminal-hint"
-            >
-        </form>
+        <section aria-labelledby="projects-heading">
+            <h2 id="projects-heading" data-i18n="projectsHeading">Selected projects</h2>
+            <div class="project-list">
+                <article data-project="quadrofleet" aria-labelledby="quadrofleet-heading">
+                    <h3 id="quadrofleet-heading">QuadroFleet</h3>
+                    <p data-field="summary">Long-range drone control over 4G/5G with FPV video and telemetry.</p>
+                    <p data-field="technical">OpenIPC video, WireGuard connectivity and CRSF flight-controller integration.</p>
+                    <a data-field="link" href="https://quadrofleet.com/">Website: quadrofleet.com</a>
+                </article>
+                <article data-project="fsk-comm" aria-labelledby="fsk-comm-heading">
+                    <h3 id="fsk-comm-heading">FSK Comm</h3>
+                    <p data-field="summary">An Android app for sending short encrypted messages through sound.</p>
+                    <p data-field="technical">BFSK modulation, shared-key message protection and a compact send-and-listen workflow.</p>
+                    <a data-field="link" href="https://fsk.beep.systems/">Website: fsk.beep.systems</a>
+                </article>
+                <article data-project="voluscape" aria-labelledby="voluscape-heading">
+                    <h3 id="voluscape-heading">VoluScape</h3>
+                    <p data-field="summary">Drone footage reconstructed into explorable 3D landscapes using Gaussian splatting.</p>
+                    <p data-field="technical">Reconstruction tools built around Spirula, plus a gallery and viewer extensions based on SuperSplat and PlayCanvas.</p>
+                    <a data-field="link" href="https://voluscape.beep.systems/">Demo: voluscape.beep.systems</a>
+                </article>
+                <article data-project="ventureunvault" aria-labelledby="ventureunvault-heading">
+                    <h3 id="ventureunvault-heading">VentureUnvault</h3>
+                    <p data-field="summary">Discover startup projects from multiple sources, generate concise AI summaries and publish attributed posts to Telegram.</p>
+                    <p data-field="technical">n8n, PostgreSQL and Gemini; deduplication before AI processing, controlled retries and reconciliation of uncertain publication outcomes. Website based on Telecast.</p>
+                    <a data-field="link" href="https://ventureunvault.beep.systems/">Website: ventureunvault.beep.systems</a>
+                </article>
+                <article data-project="drum-machine" aria-labelledby="drum-machine-heading">
+                    <h3 id="drum-machine-heading">Drum Machine</h3>
+                    <p data-field="summary">A browser drum machine for guitar practice, from rock to metal.</p>
+                    <p data-field="technical">Web Audio scheduling, acoustic and industrial kits, a rhythm editor, local saving and EN/DE/RU controls.</p>
+                    <a data-field="link" href="https://drum.beep.systems/">Demo: drum.beep.systems</a>
+                </article>
+            </div>
+        </section>
 
-        <p id="terminal-hint" class="hint hidden"></p>
+        <section class="contact" aria-labelledby="contact-heading">
+            <h2 id="contact-heading" data-i18n="contactHeading">Contact</h2>
+            <p><a href="https://www.linkedin.com/in/yevgeniy-sanitskiy/">LinkedIn</a> / <a href="mailto:contact@beep.systems">contact@beep.systems</a></p>
+        </section>
     </div>
 </main>
-
-<noscript>
-    <section class="noscript-card">
-        <h1>BEEP SYSTEMS</h1>
-        <p>Terminal-style portfolio by Yevgeniy Sanitskiy.</p>
-        <p>Projects: QuadroFleet and FSK Comm.</p>
-        <p>LinkedIn: <a href="https://www.linkedin.com/in/yevgeniy-sanitskiy/">yevgeniy-sanitskiy</a></p>
-        <p>Email: <a href="mailto:contact@beep.systems">contact@beep.systems</a></p>
-    </section>
-</noscript>
 
 <script src="/assets/app.js"></script>
 </body>
